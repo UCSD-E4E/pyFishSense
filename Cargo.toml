@@ -9,4 +9,5 @@ name = "pyfishsense"
 crate-type = ["cdylib"]
 
 [dependencies]
+fishsense = { git = "https://github.com/UCSD-E4E/fishsense.rs", version = "0.1.0" }
 pyo3 = "0.20.0"
