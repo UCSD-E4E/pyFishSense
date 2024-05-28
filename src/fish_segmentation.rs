@@ -14,7 +14,7 @@ impl FishSegmentationPy {
     pub fn new() -> PyResult<Self> {
         match FishSegmentation::from_web() {
             Ok(fish_segmentation) => Ok(FishSegmentationPy { fish_segmentation }),
-            Err(_) => Err(PyErr::new::<PyTypeError, _>("An error occurred downloading the segmentation model."))
+            Err(error) => Err(PyErr::new::<PyTypeError, _>(error.to_string()))
         }
     }
 
@@ -23,7 +23,7 @@ impl FishSegmentationPy {
         
         match self.fish_segmentation.inference(&img_arr) {
             Ok(masks) => Ok(masks.into_pyarray_bound(py)),
-            Err(_) => Err(PyErr::new::<PyTypeError, _>("An error occurred during segmentation."))
+            Err(error) => Err(PyErr::new::<PyTypeError, _>(error.to_string()))
         }
     }
 }
