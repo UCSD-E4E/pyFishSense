@@ -13,7 +13,12 @@ impl FishSegmentationPy {
     #[new]
     pub fn new() -> PyResult<Self> {
         match FishSegmentation::from_web() {
-            Ok(fish_segmentation) => Ok(FishSegmentationPy { fish_segmentation }),
+            Ok(mut fish_segmentation) => {
+                match fish_segmentation.load_model() {
+                    Ok(_) => Ok(FishSegmentationPy { fish_segmentation }),
+                    Err(error) => Err(PyErr::new::<PyTypeError, _>(error.to_string()))
+                }
+            },
             Err(error) => Err(PyErr::new::<PyTypeError, _>(error.to_string()))
         }
     }
