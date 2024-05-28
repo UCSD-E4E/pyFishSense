@@ -1,16 +1,15 @@
+mod fish_module;
+mod fish_segmentation;
+
+use fish_module::FishModule;
 use pyo3::prelude::*;
-
-use fishsense::add;
-
-/// Formats the sum of two numbers as string.
-#[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok(add(a, a + b).to_string())
-}
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn pyfishsense(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
+fn pyfishsense<'a>(_py: Python, m: Bound<'a, PyModule>) -> PyResult<()> {
+    let fish = FishModule::new(&m)?;
+
+    m.add_submodule(&fish.module)?;
+
     Ok(())
 }

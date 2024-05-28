@@ -10,4 +10,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 fishsense = { git = "https://github.com/UCSD-E4E/fishsense.rs", version = "0.1.0" }
-pyo3 = "0.20.0"
+ndarray = "0.15.6"
+numpy = "0.21.0"
+pyo3 = { version = "0.21", features = ["extension-module"] }
