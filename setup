@@ -1,0 +1,58 @@
+#! /bin/bash
+
+echo This script setups the devcontainer for Visual Studio Code using the accelerators your system supports.
+echo ""
+
+devcontainer_directory=
+
+nvidia_detected=0
+cuda_supported=0
+cpu_only=1
+
+# Detect if docker is present
+which docker > /dev/null
+if [ $? -ne 0 ]; then
+    echo "Docker is not installed or not in your path.  Please install Docker and try again."
+    exit $?
+fi
+
+# Check if user is in the docker group
+if ! id -nG "$USER" | grep -qw "docker"; then
+    echo $USER does not belong to the docker group.  Please correct this and try again.
+    exit $?
+fi
+
+# Check for the presence of an NVIDIA GPU
+which nvidia-smi > /dev/null
+if [ $? -eq 0 ]; then
+    nvidia_detected=1
+fi
+
+# Check to see if docker supports passing through the GPU
+if docker info | grep -qw nvidia; then
+    cuda_supported=1
+    cpu_only=0
+
+    devcontainer_directory=cuda_$devcontainer_directory
+fi
+
+# If we detected an NVIDIA GPU, but can't use it in docker, warn the user.
+if [ $nvidia_detected -ne $cuda_supported ]; then
+    echo "WARNING: NVIDIA GPU detected without CUDA docker support.  Install the nvidia-container-runtime to correct this."
+fi
+
+# Prepend the cpu_ to the directory name if we are still CPU only.
+if [ $cpu_only -eq 1 ]; then
+    devcontainer_directory=cpu_$devcontainer_directory
+fi
+
+devcontainer_directory=.${devcontainer_directory}devcontainer
+
+echo ""
+echo "Here is the detected configuration:"
+echo "  cpu_only:               $cpu_only"
+echo "  cuda_supported:         $cuda_supported"
+echo "  devcontainer_directory: $devcontainer_directory"
+
+#rm .devcontainer
+ln -s $devcontainer_directory .devcontainer 
