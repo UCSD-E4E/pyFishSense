@@ -5,9 +5,6 @@
 		"--runtime=nvidia",
 		"-e", "NVIDIA_DRIVER_CAPABILITIES=all"
 	],
-	"mounts": [
-		"source=${localEnv:HOME}/mnt,target=/home/ubuntu/mnt,type=bind"
-	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
